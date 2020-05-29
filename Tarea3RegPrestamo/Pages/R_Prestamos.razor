@@ -1,0 +1,166 @@
+﻿@page "/Prestamos"
+
+@using Tarea3RegPrestamo.Models
+@using Tarea3RegPrestamo.BLL
+@inject IToastService toast
+
+<h3>R_Prestamos</h3>
+<EditForm Model="prestamos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator/>
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de Prestamos</h3>
+        </div>
+        <div class="card-body">
+            <form>
+                @*PrestamoId*@
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>PrestamoId</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="prestamos.PrestamoId" class="form-control col-4" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*FechaPrestamo*@
+                <div class="form-group">
+                    <label>Fecha Prestamos</label>
+                    <InputDate @bind-Value="prestamos.FechaPrestamo" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.FechaPrestamo)" />
+                </div>
+
+                @*Persona*@
+                <div class="form-group">
+                    <label>Persona</label>
+                    <InputSelect @bind-Value="@PersonaSelect" class="form-control" @onclick="CargarPersona">
+                        <option value="0" disabled selected>Seleccione una Persona</option>
+                        @if (ListaPersona.Count == 0)
+                        {
+                            <option value="" disabled>No hay Personas Registradas</option>
+                        }
+                        else
+                        {
+                            @foreach (var item in ListaPersona)
+                            {
+                                <option value="@item.PersonaId">@item.Normbre</option>
+                            }
+                           
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(()=>prestamos.PersonaId)" />
+                </div>
+                @*Cocepto*@
+                <div class="form-group">
+                    <label>Concepto</label>
+                    <InputText @bind-Value="prestamos.Concepto" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Concepto)" />
+                </div>
+                @*Monto*@
+                <div class="form-group">
+                    <label>Monto</label>
+                    <InputNumber @bind-Value="prestamos.Monto" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Monto)" />
+                </div>
+                @*Balance*@
+                <div class="form-group">
+                    <label>Balance</label>
+                    <InputNumber @bind-Value="prestamos.Balances" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Balances)" />
+                </div>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">Nuevo</button>
+                <button type="submit" class="btn btn-lg btn-success">Guardar</button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">Eliminar</button>
+            </div>
+         </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int PrestamoId { get; set; }
+    private Prestamos prestamos = new Prestamos();
+    PersonaBLL persona = new PersonaBLL();
+    private string PersonaSelect { get; set; }
+
+
+    private List<Persona> ListaPersona = new List<Persona>();
+    private Persona Persona { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ListaPersona = PersonaBLL.GetList(e => true);
+        Persona = new Persona();
+        Nuevo();
+    }
+    public void Nuevo()
+    {
+        prestamos = new Prestamos();
+    }
+   
+    private void CargarPersona()
+    {
+        try
+        {
+            Persona= PersonaBLL.Buscar(Convert.ToInt32(PersonaSelect));
+
+        }
+        catch (Exception )
+        {
+
+        }
+    }
+
+    private void Buscar()
+    {
+        if (prestamos.PrestamoId > 0)
+        {
+            var encontrado = PrestamosBLL.Buscar(prestamos.PrestamoId);
+
+            if (encontrado != null)
+                this.prestamos = encontrado;
+            else
+                toast.ShowError("No encontrado");
+        }
+    }
+
+    public void Guardar()
+    {
+        bool guardo;
+
+        guardo = PrestamosBLL.Guardar(prestamos);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible guardar");
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = PrestamosBLL.Eliminar(prestamos.PrestamoId);
+
+        if (elimino)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible eliminar");
+    }
+}
