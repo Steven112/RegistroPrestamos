@@ -20,19 +20,20 @@ namespace Tarea3RegPrestamo.BLL
         }
         private static bool Insertar(Prestamos prestamo)
         {
-            Persona persona = new Persona();
             bool paso = false;
             Contexto contexto = new Contexto();
-
+            Persona persona = new Persona();
             try
             {
 
                 if (contexto.prestamos.Add(prestamo) != null)
                 {
                     contexto.personas.Find(prestamo.PersonaId).Balance += prestamo.Monto;
-                    paso = contexto.SaveChanges() > 0;
+                    
+
                 }
-                
+                paso = contexto.SaveChanges() > 0;
+
             }
             catch (Exception)
             {
@@ -48,11 +49,21 @@ namespace Tarea3RegPrestamo.BLL
         public static bool Modificar(Prestamos prestamos)
         {
             bool paso = false;
-
             Contexto contexto = new Contexto();
-
+            
             try
             {
+                var persona = PersonaBLL.Buscar(prestamos.PersonaId);
+                var anterior = Buscar(prestamos.PrestamoId);
+
+                persona.Balance -= anterior.Monto;
+                contexto.prestamos.Add(prestamos);
+
+                persona.Balance += prestamos.Monto;
+                PersonaBLL.Modificar(persona);
+
+                prestamos.Balances = 1000;
+
                 contexto.Entry(prestamos).State = EntityState.Modified;
                 paso = contexto.SaveChanges() > 0;
             }
@@ -66,16 +77,29 @@ namespace Tarea3RegPrestamo.BLL
             }
             return paso;
         }
+      /*  public static void ModificarBalance(Prestamos prestamos)
+        {
+            Persona persona = new Persona();
+            Prestamos prestamosantiguo = new Prestamos();
+            prestamosantiguo = PrestamosBLL.Buscar(prestamos.PersonaId);
+            persona = PersonaBLL.Buscar(prestamos.PersonaId);
+            persona.Balance -= prestamosantiguo.Monto;
+            persona.Balance += prestamos.Monto;
+
+            PersonaBLL.Modificar(persona);
+        }*/
         public static bool Eliminar(int id)
         {
             bool paso = false;
             Contexto contexto = new Contexto();
+            Prestamos prestamos = new Prestamos();
             try
             {
                 var prestam = contexto.prestamos.Find(id);
 
                 if (prestam != null)
                 {
+                    contexto.personas.Find(prestam.PersonaId).Balance -= prestam.Monto;
                     contexto.prestamos.Remove(prestam);
                     paso = contexto.SaveChanges() > 0;
                 }

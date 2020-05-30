@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Tarea3RegPrestamo.Migrations
 {
-    public partial class PrestamoPersona : Migration
+    public partial class PrestamoPersonaAp : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -37,6 +37,17 @@ namespace Tarea3RegPrestamo.Models
             FechaNacimiento = DateTime.Now;
             Balance = 0;
         }
+
+        public Persona(int personaId, string normbre, string telofono, string cedula, string direccion, DateTime fechaNacimiento, decimal balance)
+        {
+            PersonaId = personaId;
+            Normbre = normbre ??throw new ArgumentException(nameof(normbre));
+            Telofono = telofono ?? throw new ArgumentException(nameof(telofono)); ;
+            Cedula = cedula ?? throw new ArgumentException(nameof(cedula)); ;
+            Direccion = direccion ?? throw new ArgumentException(nameof(direccion)); ;
+            FechaNacimiento = fechaNacimiento ;
+            Balance = balance;
+        }
     }
 
 

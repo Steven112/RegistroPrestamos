@@ -9,6 +9,7 @@ namespace Tarea3RegPrestamo.Models
     public class Prestamos
     {
         [Key]
+        [Range(0, 1000000, ErrorMessage = "El campo ID no puede ser menor que cero o mayor a 1000000.")]
         public int PrestamoId { get; set; }
         [Required(ErrorMessage = "Es obligatorio introducir una fecha diferente")]
         public DateTime FechaPrestamo { get; set; }
@@ -28,6 +29,16 @@ namespace Tarea3RegPrestamo.Models
             Concepto = string.Empty;
             Monto = 0;
             Balances = 0;
+        }
+
+        public Prestamos(int prestamoId, DateTime fechaPrestamo, int personaId, string concepto, decimal monto, decimal balances)
+        {
+            PrestamoId = prestamoId;
+            FechaPrestamo = fechaPrestamo;
+            PersonaId = personaId;
+            Concepto = concepto;
+            Monto = monto;
+            Balances = balances;
         }
     }
 }

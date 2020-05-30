@@ -62,7 +62,7 @@
                 @*Balance*@
                 <div class="form-group">
                     <label>Balance</label>
-                    <InputNumber @bind-Value="persona.Balance" class="form-control " />
+                    <InputNumber @bind-Value="persona.Balance" class="form-control" step="any" ReadOnly="true"></InputNumber>
                     <ValidationMessage For="@(()=> persona.Balance)" />
                 </div>
             </form>
@@ -80,11 +80,12 @@
 @code {
     [Parameter]
     public int PersonaId { get; set; }
-    private Persona persona = new Persona();
+    Persona persona = new Persona();
 
     protected override void OnInitialized()
     {
         Nuevo();
+        Buscar();
     }
     public void Nuevo()
     {
@@ -92,17 +93,27 @@
     }
 
 
-    private void Buscar()
+    public void Buscar()
     {
-        if (persona.PersonaId > 0)
+
+
+        if (persona.PersonaId>0)
         {
-            var encontrado =PersonaBLL.Buscar(persona.PersonaId);
+            var encontrado = PersonaBLL.Buscar(persona.PersonaId);
 
             if (encontrado != null)
+            {
                 this.persona = encontrado;
-            else
-                toast.ShowError("No encontrado");
+            }
+
         }
+        else
+        {
+            this.persona = new Persona();
+        }
+
+
+
     }
 
     public void Guardar()

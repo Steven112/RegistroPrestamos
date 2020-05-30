@@ -9,8 +9,8 @@ using Tarea3RegPrestamo.DAL;
 namespace Tarea3RegPrestamo.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20200529022850_PrestamoPersona")]
-    partial class PrestamoPersona
+    [Migration("20200530021707_PrestamoPersonaAp")]
+    partial class PrestamoPersonaAp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
